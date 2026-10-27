@@ -257,6 +257,3 @@ https://<your-github-username>.github.io/playwright-ecommerce-automation-framewo
 
 Only claim metrics such as “reduced execution time by 30%” after you have measured them from your own runs.
 
-## Important portfolio note
-
-This is a practice/portfolio project against a public training application. Present it as **your automation framework implementation for a practice e-commerce application**, not as production work performed for Rahul Shetty Academy.
