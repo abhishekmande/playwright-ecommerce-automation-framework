@@ -1,0 +1,84 @@
+name: Playwright Cross-Browser Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: https://rahulshettyacademy.com/client/
+      API_BASE_URL: https://rahulshettyacademy.com/api/ecom
+      USER_EMAIL: ${{ secrets.USER_EMAIL }}
+      USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
+      PRODUCT_NAME: ZARA COAT 3
+      COUNTRY: India
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          test -n "$USER_EMAIL" || (echo "Missing GitHub Actions secret USER_EMAIL" && exit 1)
+          test -n "$USER_PASSWORD" || (echo "Missing GitHub Actions secret USER_PASSWORD" && exit 1)
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright suite
+        run: npm test
+
+      - name: Generate stakeholder dashboard
+        if: always()
+        run: npm run dashboard
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload raw test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 14
+
+      - name: Upload dashboard for GitHub Pages
+        if: github.ref == 'refs/heads/main' && always()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/
+
+  deploy-dashboard:
+    if: github.ref == 'refs/heads/main' && always()
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy dashboard to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

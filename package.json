@@ -1,0 +1,26 @@
+{
+  "name": "rahulshetty-playwright-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portfolio-ready Playwright + TypeScript automation framework for the Rahul Shetty Academy Let's Shop practice application.",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep @regression",
+    "test:api": "playwright test tests/api",
+    "report": "playwright show-report",
+    "dashboard": "node scripts/generate-dashboard.mjs",
+    "clean": "node scripts/clean.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@types/node": "^24.0.0",
+    "dotenv": "^17.2.0",
+    "typescript": "^5.9.0"
+  }
+}
